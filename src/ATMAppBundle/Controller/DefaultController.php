@@ -11,19 +11,15 @@ use Symfony\Component\HttpFoundation\Request;
 
 class DefaultController extends Controller
 {
-    private $currencyAvailables = array(100, 50, 20, 10);
+    private $currencyAvailables = array(100, 50, 20, 10);   //The currencies availables in ATM
 
-
-    public function indexAction($name)
-    {
-        return $this->render('ATMAppBundle:Default:index.html.twig', array('name' => $name));
-    }
-
+    
+    //This is the action that will display the form and it will return the amount requested
     public function atmAction(Request $request)
     {
-        // create a task and give it some dummy data for this example
+
         $atm = new ATM();
-        $atm->setATM(380);                
+        $atm->setATM(0);                
         
         $form = $this->createFormBuilder($atm)                
             ->add('atm', 'text')            
@@ -33,6 +29,7 @@ class DefaultController extends Controller
         
         $form->handleRequest($request);
 
+        //Probably I will need to add more validations
         if ($form->isValid()) {
             
      
@@ -43,8 +40,9 @@ class DefaultController extends Controller
                 if($this->validateAmount($data['atm'])) {
 
                     $sOutput = $this->getAmount($data['atm']);
-                    //echo $sOutput;
-                    //return $this->render('ATMAppBundle:Default:form1.html.twig', $draw = $sOutput);
+
+                    //From what I read there are other ways of passing the parameters and let the twig file
+                    // to generate the complete html with variables included
                     return new Response('<html><body> '.$sOutput.'</body></html>');
 
                 }
@@ -61,10 +59,10 @@ class DefaultController extends Controller
         ));
     }
 
+    //This function will return the amount requested if the input parameter is valid
     public function getAmount($amount) {
 
-        $i =0;
-        $aOutput = array();
+        $i =0;        
         $sOutput = "";
 
 
@@ -73,10 +71,11 @@ class DefaultController extends Controller
 
             $iTemporal = floor($amount/$currency);
 
-            if ($iTemporal>0) {
-                //$aOutput[$i]  = floor($amount/$currency). " billetes de ".$currency;
 
+            if ($iTemporal>0) {
+                
                 $sOutput  = $sOutput. floor($amount/$currency). " billetes de ".$currency. "   ";
+                //Displaying the images, better way would be to have the images locally
                 if ($currency == 100) {
                     $sOutput = $sOutput ."<img src='http://imagenes.comosevive.com/mexico/100-pesos-mexicanos.jpg' alt='Billete height='72' width='72'><br /><br />";
                 }
@@ -105,6 +104,7 @@ class DefaultController extends Controller
 
     }
 
+    //Function to validate if we will be able to make the draw correctly
     public function validateAmount($amount) {
         $bReturn = False;
 

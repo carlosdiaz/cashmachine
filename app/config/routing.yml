@@ -1,0 +1,20 @@
+atmapp:
+    resource: "@ATMAppBundle/Resources/config/routing.php"
+    prefix:   /
+
+app:
+    resource: "@AppBundle/Controller/"
+    type:     annotation
+
+
+processingTransaction:
+    pattern:  /processingTransaction/
+    defaults: { _controller: "ATMAppBundle:Default:atm" }
+    
+
+atm_new:
+    pattern:  /atm_new/
+    defaults: { _controller: "ATMAppBundle:Default:atm" }
+    requirements:
+        _method:  GET|POST
+
